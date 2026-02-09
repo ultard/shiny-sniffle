@@ -1,0 +1,25 @@
+.product-card {
+  width: 300px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+.product-card__image {
+  width: 100%;
+  max-width: 300px;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.product-card__title {
+  font-size: 20px;
+  color: #3498db;
+  margin-bottom: 8px;
+}
+.product-card__description {
+  font-size: 16px;
+  color: #333;
+}
+
+/*# sourceMappingURL=styles.css.map */

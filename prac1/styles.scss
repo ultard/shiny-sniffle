@@ -1,0 +1,33 @@
+$primary-color: #3498db;
+$font-size-base: 16px;
+
+@mixin image-style($border-width) {
+  width: 100%;
+  max-width: 300px;
+  border: $border-width solid $primary-color;
+  border-radius: 8px;
+}
+
+.product-card {
+  width: 300px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  font-family: Arial, sans-serif;
+
+  &__image {
+    @include image-style(2px);
+    margin-bottom: 10px;
+  }
+
+  &__title {
+    font-size: $font-size-base * 1.25;
+    color: $primary-color;
+    margin-bottom: 8px;
+  }
+
+  &__description {
+    font-size: $font-size-base;
+    color: #333;
+  }
+}
