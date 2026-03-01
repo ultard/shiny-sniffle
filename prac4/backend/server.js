@@ -1,7 +1,9 @@
 // Импорт основных зависимостей
-const express = require('express'); // Express — фреймворк для создания HTTP API
-const { nanoid } = require('nanoid'); // nanoid — генерация коротких уникальных ID
-const cors = require('cors'); // CORS — позволяет запросы с другого домена
+const express = require('express');
+const { nanoid } = require('nanoid');
+const cors = require('cors');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 // Создаем экземпляр приложения и настраиваем порт
 const app = express();
@@ -23,13 +25,11 @@ let products = [
     { id: nanoid(6), name: 'Pen Set', category: 'Stationery', description: 'Gel ink pens in assorted colors', price: 12, stock: 90, rating: 4.2 }
 ];
 
-// Подключаем JSON-парсер для тела запросов
+// Подключаем JSON-парсер и CORS
 app.use(express.json());
-
-// Настраиваем CORS
 app.use(cors({
-    origin: "http://localhost:5173", // разрешенный источник
-    methods: ["GET", "POST", "PATCH", "DELETE"], // допустимые методы
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
@@ -44,7 +44,122 @@ app.use((req, res, next) => {
     next();
 });
 
-// Вспомогательная функция: ищет товар по id или отправляет 404
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.3',
+        info: {
+            title: 'Products API',
+            version: '1.0.0',
+            description: 'Simple REST API для управления товарами (CRUD)',
+            contact: {
+                name: 'Your Name',
+            },
+        },
+        servers: [
+            {
+                url: `http://localhost:${port}`,
+                description: 'Development server',
+            },
+        ],
+        tags: [
+            {
+                name: 'Products',
+                description: 'Операции с товарами',
+            },
+        ],
+        components: {
+            schemas: {
+                Product: {
+                    type: 'object',
+                    required: ['name', 'category', 'price', 'stock'],
+                    properties: {
+                        id: {
+                            type: 'string',
+                            example: 'abc123',
+                            description: 'Уникальный идентификатор (генерируется автоматически)',
+                            readOnly: true,
+                        },
+                        name: {
+                            type: 'string',
+                            example: 'iPhone 15',
+                            minLength: 1,
+                        },
+                        category: {
+                            type: 'string',
+                            example: 'Electronics',
+                        },
+                        description: {
+                            type: 'string',
+                            example: 'Latest smartphone with advanced camera',
+                            nullable: true,
+                        },
+                        price: {
+                            type: 'number',
+                            format: 'float',
+                            example: 999,
+                            minimum: 0,
+                        },
+                        stock: {
+                            type: 'integer',
+                            example: 50,
+                            minimum: 0,
+                        },
+                        rating: {
+                            type: 'number',
+                            format: 'float',
+                            example: 4.8,
+                            minimum: 0,
+                            maximum: 5,
+                            nullable: true,
+                        },
+                    },
+                },
+                ProductCreate: {
+                    type: 'object',
+                    required: ['name', 'category', 'price', 'stock'],
+                    properties: {
+                        name: { type: 'string', example: 'New Product' },
+                        category: { type: 'string', example: 'Grocery' },
+                        description: { type: 'string', example: 'Very nice thing', nullable: true },
+                        price: { type: 'number', example: 149.99 },
+                        stock: { type: 'integer', example: 100 },
+                        rating: { type: 'number', example: 4.5, nullable: true },
+                    },
+                },
+                ProductUpdate: {
+                    type: 'object',
+                    properties: {
+                        name: { type: 'string', example: 'Updated Name', nullable: true },
+                        category: { type: 'string', example: 'New Category', nullable: true },
+                        description: { type: 'string', nullable: true },
+                        price: { type: 'number', example: 199.99, nullable: true },
+                        stock: { type: 'integer', example: 75, nullable: true },
+                        rating: { type: 'number', example: 4.7, nullable: true },
+                    },
+                },
+                Error: {
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string', example: 'Product not found' },
+                    },
+                },
+            },
+        },
+    },
+    apis: ['./server.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// Подключаем Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    swaggerOptions: {
+        persistAuthorization: true,
+    },
+}));
+
+// Вспомогательная функция поиска продукта
 function findProductOr404(id, res) {
     const product = products.find(p => p.id === id);
     if (!product) {
@@ -54,52 +169,142 @@ function findProductOr404(id, res) {
     return product;
 }
 
-// Создание нового товара (POST /api/products)
-app.post("/api/products", (req, res) => {
-    const { name, category, description, price, stock, rating } = req.body;
-
-    // Формируем новый объект продукта
-    const newProduct = {
-        id: nanoid(6),
-        name: name.trim(),
-        category: category.trim(),
-        description: description.trim(),
-        price: Number(price),
-        stock: Number(stock),
-        rating: rating ? Number(rating) : undefined
-    };
-
-    // Добавляем товар в "базу"
-    products.push(newProduct);
-    res.status(201).json(newProduct);
-});
-
-// Получение списка всех товаров (GET /api/products)
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Получить список всех товаров
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: Список всех товаров
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ */
 app.get("/api/products", (req, res) => {
     res.json(products);
 });
 
-// Получение одного товара по id (GET /api/products/:id)
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   get:
+ *     summary: Получить один товар по ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID товара (6-символьный nanoid)
+ *     responses:
+ *       200:
+ *         description: Найденный товар
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Товар не найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 app.get("/api/products/:id", (req, res) => {
-    const id = req.params.id;
-    const product = findProductOr404(id, res);
+    const product = findProductOr404(req.params.id, res);
     if (!product) return;
     res.json(product);
 });
 
-// Обновление данных товара (PATCH /api/products/:id)
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Создать новый товар
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductCreate'
+ *     responses:
+ *       201:
+ *         description: Товар успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Некорректные данные
+ */
+app.post("/api/products", (req, res) => {
+    const { name, category, description, price, stock, rating } = req.body;
+
+    if (!name || !category || price == null || stock == null) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const newProduct = {
+        id: nanoid(6),
+        name: name.trim(),
+        category: category.trim(),
+        description: description ? description.trim() : undefined,
+        price: Number(price),
+        stock: Number(stock),
+        rating: rating !== undefined ? Number(rating) : undefined
+    };
+
+    products.push(newProduct);
+    res.status(201).json(newProduct);
+});
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   patch:
+ *     summary: Частичное обновление товара
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProductUpdate'
+ *     responses:
+ *       200:
+ *         description: Товар обновлён
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Товар не найден
+ *       400:
+ *         description: Ничего не передано для обновления
+ */
 app.patch("/api/products/:id", (req, res) => {
-    const id = req.params.id;
-    const product = findProductOr404(id, res);
+    const product = findProductOr404(req.params.id, res);
     if (!product) return;
 
-    // Проверяем, было ли что-то передано для обновления
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({ error: "Nothing to update" });
     }
 
-    // Обновляем только переданные поля
     const { name, category, description, price, stock, rating } = req.body;
+
     if (name !== undefined) product.name = name.trim();
     if (category !== undefined) product.category = category.trim();
     if (description !== undefined) product.description = description.trim();
@@ -110,29 +315,46 @@ app.patch("/api/products/:id", (req, res) => {
     res.json(product);
 });
 
-// Удаление товара (DELETE /api/products/:id)
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Удалить товар по ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Товар успешно удалён
+ *       404:
+ *         description: Товар не найден
+ */
 app.delete("/api/products/:id", (req, res) => {
     const id = req.params.id;
     const exists = products.some(p => p.id === id);
     if (!exists) return res.status(404).json({ error: "Product not found" });
 
-    // Фильтруем список, исключая удаленный товар
     products = products.filter(p => p.id !== id);
-    res.status(204).send(); // Успех, контент не возвращается
+    res.status(204).send();
 });
 
-// Обработка несуществующих маршрутов — 404 Not Found
+// 404 для несуществующих маршрутов
 app.use((req, res) => {
     res.status(404).json({ error: "Not found" });
 });
 
-// Глобальный обработчик ошибок (чтобы не падал сервер)
-app.use((err, req, res) => {
+// Глобальный обработчик ошибок
+app.use((err, req, res, next) => {
     console.error("Unhandled error:", err);
     res.status(500).json({ error: "Internal server error" });
 });
 
-// Запускаем сервер
+// Запуск сервера
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
+    console.log(`Swagger docs: http://localhost:${port}/api-docs`);
 });
