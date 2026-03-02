@@ -101,6 +101,49 @@ $dangerBg: rgba(239, 68, 68, 0.12);
   gap: 10px;
 }
 
+.usersPanel {
+  margin-top: 22px;
+
+  &__title {
+    margin-bottom: 12px;
+    font-size: 18px;
+  }
+}
+
+.userRow {
+  @include card(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.userName {
+  font-weight: 600;
+}
+
+.userEmail {
+  opacity: 0.8;
+  font-size: 13px;
+}
+
+.userRoleSelect {
+  min-width: 140px;
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .empty {
   padding: 18px;
   border-radius: 12px;
@@ -211,6 +254,19 @@ border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   overflow: hidden;
 
+  &__tabs {
+    display: flex;
+    border-bottom: 1px solid $border;
+  }
+  &__tab {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    &.active { border-bottom: 3px solid $primary; font-weight: 600; }
+  }
+
   &__header {
     padding: 12px;
     border-bottom: 1px solid $border;
@@ -230,6 +286,8 @@ border-radius: 16px;
     margin-top: 4px;
   }
 }
+
+.error { color: #ef4444; text-align: center; margin: 8px 0; }
 
 .iconBtn {
   width: 34px;
