@@ -22,7 +22,7 @@ export const api = {
     return response.data;
   },
   updateProduct: async (id, product) => {
-    let response = await apiClient.patch(`/products/${id}`, product);
+    let response = await apiClient.put(`/products/${id}`, product);
     return response.data;
   },
   deleteProduct: async (id) => {
