@@ -11,18 +11,126 @@ const port = 3000;
 
 // Начальный набор тестовых товаров
 let products = [
-    { id: nanoid(6), name: 'iPhone 15', category: 'Electronics', description: 'Latest smartphone with advanced camera', price: 999, stock: 50, rating: 4.8 },
-    { id: nanoid(6), name: 'MacBook Pro', category: 'Electronics', description: 'High-performance laptop for professionals', price: 1999, stock: 20, rating: 4.9 },
-    { id: nanoid(6), name: 'Wireless Headphones', category: 'Electronics', description: 'Noise-cancelling over-ear headphones', price: 299, stock: 100, rating: 4.5 },
-    { id: nanoid(6), name: 'Coffee Maker', category: 'Home Appliances', description: 'Automatic drip coffee machine', price: 89, stock: 30, rating: 4.2 },
-    { id: nanoid(6), name: 'Blender', category: 'Home Appliances', description: 'High-speed blender for smoothies', price: 59, stock: 40, rating: 4.3 },
-    { id: nanoid(6), name: 'Running Shoes', category: 'Footwear', description: 'Lightweight sneakers for marathon runners', price: 129, stock: 60, rating: 4.6 },
-    { id: nanoid(6), name: 'Yoga Mat', category: 'Fitness', description: 'Non-slip eco-friendly yoga mat', price: 39, stock: 80, rating: 4.4 },
-    { id: nanoid(6), name: 'Protein Powder', category: 'Fitness', description: 'Whey protein for muscle gain', price: 49, stock: 25, rating: 4.7 },
-    { id: nanoid(6), name: 'Organic Tea', category: 'Grocery', description: 'Assorted herbal tea blends', price: 19, stock: 150, rating: 4.1 },
-    { id: nanoid(6), name: 'Dark Chocolate', category: 'Grocery', description: '70% cacao organic chocolate bar', price: 5, stock: 200, rating: 4.9 },
-    { id: nanoid(6), name: 'Notebook', category: 'Stationery', description: 'Spiral-bound lined notebook', price: 8, stock: 120, rating: 4.0 },
-    { id: nanoid(6), name: 'Pen Set', category: 'Stationery', description: 'Gel ink pens in assorted colors', price: 12, stock: 90, rating: 4.2 }
+    {
+        id: nanoid(6),
+        name: 'iPhone 15',
+        category: 'Electronics',
+        description: 'Latest smartphone with advanced camera',
+        price: 999,
+        stock: 50,
+        rating: 4.8,
+        photo: "https://www.apple.com/v/iphone/home/ci/images/overview/select/iphone_17pro__0s6piftg70ym_small_2x.jpg"
+    },
+    {
+        id: nanoid(6),
+        name: 'MacBook Pro',
+        category: 'Electronics',
+        description: 'High-performance laptop for professionals',
+        price: 1999,
+        stock: 20,
+        rating: 4.9,
+        photo: "https://www.apple.com/assets-www/en_WW/mac/01_product_tile/small/mbp_14_16_1c273d714_2x.jpg"
+    },
+    {
+        id: nanoid(6),
+        name: 'Wireless Headphones',
+        category: 'Electronics',
+        description: 'Noise-cancelling over-ear headphones',
+        price: 299,
+        stock: 100,
+        rating: 4.5,
+        photo: "https://www.apple.com/v/airpods/shared/compare/f/images/compare/compare_airpods_max__b14s2x6q07rm_small_2x.png"
+    },
+    {
+        id: nanoid(6),
+        name: 'Coffee Maker',
+        category: 'Home Appliances',
+        description: 'Automatic drip coffee machine',
+        price: 89,
+        stock: 30,
+        rating: 4.2,
+        photo: "https://images.unsplash.com/photo-1637029436347-e33bf98a5412?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Blender',
+        category: 'Home Appliances',
+        description: 'High-speed blender for smoothies',
+        price: 59,
+        stock: 40,
+        rating: 4.3,
+        photo: "https://plus.unsplash.com/premium_photo-1718043036199-d98bef36af46?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Running Shoes',
+        category: 'Footwear',
+        description: 'Lightweight sneakers for marathon runners',
+        price: 129,
+        stock: 60,
+        rating: 4.6,
+        photo: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Yoga Mat',
+        category: 'Fitness',
+        description: 'Non-slip eco-friendly yoga mat',
+        price: 39,
+        stock: 80,
+        rating: 4.4,
+        photo: "https://images.unsplash.com/photo-1591291621164-2c6367723315?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Protein Powder',
+        category: 'Fitness',
+        description: 'Whey protein for muscle gain',
+        price: 49,
+        stock: 25,
+        rating: 4.7,
+        photo: "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Organic Tea',
+        category: 'Grocery',
+        description: 'Assorted herbal tea blends',
+        price: 19,
+        stock: 150,
+        rating: 4.1,
+        photo: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Dark Chocolate',
+        category: 'Grocery',
+        description: '70% cacao organic chocolate bar',
+        price: 5,
+        stock: 200,
+        rating: 4.9,
+        photo: "https://images.unsplash.com/photo-1610450949065-1f2841536c88?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Notebook',
+        category: 'Stationery',
+        description: 'Spiral-bound lined notebook',
+        price: 8,
+        stock: 120,
+        rating: 4.0,
+        photo: "https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: nanoid(6),
+        name: 'Pen Set',
+        category: 'Stationery',
+        description: 'Gel ink pens in assorted colors',
+        price: 12,
+        stock: 90,
+        rating: 4.2,
+        photo: "https://plus.unsplash.com/premium_photo-1760662482274-b90c8050fd69?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    }
 ];
 
 // Подключаем JSON-парсер и CORS

@@ -4,7 +4,7 @@ export default function ProductItem({ product, onEdit, onDelete }) {
     return (
         <div className="productRow">
             <div className="productMain">
-                {product.photo && <img src={product.photo} alt={product.name} className="productPhoto" />}
+                {product.photo && <img className="productPhoto" src={product.photo} alt="Картинка продукта"/>}
                 <div className="productInfo">
                     <div className="productId">#{product.id}</div>
                     <div className="productName">{product.name}</div>
